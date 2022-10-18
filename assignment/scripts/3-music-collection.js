@@ -4,11 +4,11 @@ console.log('***** Music Collection *****')
 let collection = [];
 
 // create function that adds music info to the collection array
-function addToCollection(title, artist, yearPublished) {
+function addToCollection(titleIn, artistIn, yearPublishedIn) {
     let album = {
-        'title': title,
-        'artist': artist,
-        'yearPublished': yearPublished
+        title: titleIn,
+        artist: artistIn,
+        yearPublished: yearPublishedIn
     } // end album
     collection.push (album);
     return album;
@@ -48,3 +48,21 @@ function findByArtist(artist) {
 console.log('I have these albums by Bob Dylan in my collection:', findByArtist('Bob Dylan'));
 
 // Strech Goals:
+
+// must take an object in this format: { artist: 'Ray Charles', year: 1957 }
+function search(artistYearObj) {
+    let results = collection;
+    // need an if statement to check that the object being passed as an argument isn't empty
+        if (artistYearObj && Object.keys(artistYearObj).length > 0){
+            results = [];
+            for (x of collection){
+                if (artistYearObj.artist === x.artist && artistYearObj.year === x.yearPublished){
+                    results.push(x);
+                }
+            }
+        }
+    return results;
+}// end search 
+console.log('search for a bob dylan album from 1965:', search({artist:'Bob Dylan', year: '1965'}));
+console.log('expect full original collection when passed no argument', search());
+console.log('expect full original collection when passed an empty object', search({}));
