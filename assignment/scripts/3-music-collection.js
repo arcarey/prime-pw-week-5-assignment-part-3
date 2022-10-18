@@ -38,5 +38,13 @@ function showCollection(arr) {
 showCollection(collection);
 
 function findByArtist(artist) {
-    
+    let results = [];
+    for (x of collection){
+        if (x.artist === artist) {results.push (x)} 
+    }
+    return results;
 }
+
+console.log('I have these albums by Bob Dylan in my collection:', findByArtist('Bob Dylan'));
+
+// Strech Goals:
