@@ -447,7 +447,7 @@ console.log('search for a bob dylan album from 1964:', search({artist:'Bob Dylan
 console.log('expect full original collection when passed no argument', search());
 console.log('expect full original collection when passed an empty object', search({}));
 
-// search for track, returns an array of albums that have a song that match that title
+// search for track, returns an array of albums that have a song that match that title... this needs some serious looking at...
 function findByTrackName(searchInput) {
     let results = [];
     for (const album of collection) {
