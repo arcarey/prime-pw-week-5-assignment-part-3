@@ -33,7 +33,7 @@ console.log('Added to collection:',addToCollection('Highway 61 Revisited', 'Bob 
     },
     {
         trackNumber: 4,
-        trackName: 'From a Buik 6',
+        trackName: 'From a Buick 6',
         duration: '3:19'
     },
     {
@@ -258,7 +258,7 @@ console.log('Added to collection:',addToCollection('When Life Gives You Lemons, 
     },
     {
         trackNumber: 11,
-        trackName: 'Kate',
+        trackName: 'is',
         duration: '3:41'
     },
     {
@@ -447,22 +447,82 @@ console.log('search for a bob dylan album from 1964:', search({artist:'Bob Dylan
 console.log('expect full original collection when passed no argument', search());
 console.log('expect full original collection when passed an empty object', search({}));
 
-// search for track, returns an array of albums that have a song that match that title... this needs some serious looking at...
+
+
+
+// search for track, returns an array of results. Each result is an object containing the album info and an object containing and the track info
 function findByTrackName(searchInput) {
-    let results = [];
-    for (const album of collection) {
-        for (const y in album.tracks) {
-            for (const z in y.tracks){
-                if (z.trackName === searchInput) {
-                    results.push(album);
-
-                }//end conditional
-            }// end for in loop
-        }//end for in loop
-    }//end for of loop
-    return results; 
+    let returnVar=[]
+    for (const album of collection){
+        for (const track of album.tracks){
+            if (track.trackName == searchInput){
+                returnVar.push ([album,track]);
+            }
+        }
+    }//end loop of collection array
+    return returnVar;
 }//end function findByTrackName
-
+console.log(findByTrackName('Kate')); 
 console.log(
-    `the song Kate is found in ${findByTrackName('Kate')}`
-);
+    `the song Kate is found in ${findByTrackName('Kate')[0][0].title} by ${findByTrackName('Kate')[0][0].artist}. It is track number ${findByTrackName('Kate')[0][1].trackNumber}`
+); // This seems like a really cryptic way to do this. Depending on the application, I think I would split this function into 2, so I wouldn't have to return an array with ambiguous contents. Maybe findAlbumByTrackName and findSongByName. Or I would add an albumContainedIn key in the track object so I can just return the single object.
+
+
+
+
+
+// Search function that takes any of 3 arguments
+
+function multiSearch(artist, year, trackName) {
+    //start each search result as the entire collection, so when they are compared later, to allow for an empty perameter and still search with the other perameters 
+    let artistSearch = collection;
+    let yearSearch = collection;
+    let trackNameSearch = collection;
+
+    // search our collection for artists that match the search
+    if (artist){
+        artistSearch = []; //if there is an input, we empty the results of the search and add any matches
+        for (const x of collection) {
+            if (x.artist === artist) {
+                artistSearch.push(x);
+            }
+        }
+    }
+    
+    // search our collection for years that match the search
+    if (year){
+        yearSearch = []; //if there is an input, we empty the results of the search and add any matches
+        for (const x of collection) {
+            if (x.yearPublished === year) {
+                yearSearch.push(x);
+            }
+        }
+    }
+
+
+    // since we already wrote the function to find by track name, let's just resue that function. If we were to use this function in another program, we'd need to bring that code into this block
+    if (trackName){ //need a conditional to ignore this code if there's no input
+        trackNameSearch = findByTrackName(trackName)[0]; // because we wrote this function to return an array where index 0 is the album and index 1 is the track info we need to grab the index 0
+    }
+
+
+    // This block of combines only the common search results of each argument 
+    let combinedResults = [];
+    for (const artistResult of artistSearch) {
+        for (const yearResult of yearSearch) {
+            for (const trackNameResult of trackNameSearch) {
+                if (artistResult === yearResult && artistResult === trackNameResult){
+                    combinedResults.push(artistResult);
+                }// end conditional
+            }//end trackNameResult loop
+        }//end yearSearch loop
+    }//end artistSearch loop
+
+    return combinedResults;
+
+}
+
+console.log('expect 2 albums from 2005:', multiSearch('','2005',''));
+console.log('expect 2 albums from Bob Dylan:', multiSearch('Bob Dylan','',''));
+console.log('expect 1 album from Bob Dylan from 1965:', multiSearch('Bob Dylan','1965',''));
+console.log('expect 1 album from Bob Dylan that has the song Like a Rolling Stone:', multiSearch('','','Like a Rolling Stone'));
